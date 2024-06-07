@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://bydyx0d1fyvcm"]
+
+[ext_resource type="Script" path="res://SceneScripts/SnakeGridSceneScript.cs" id="1_wftpe"]
+
+[node name="SnakeGrid" type="Node2D"]
+script = ExtResource("1_wftpe")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(10, 10)
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 25.0
+offset_bottom = 25.0
+color = Color(0.854902, 0.854902, 0.854902, 1)
+
+[node name="GreenRect" type="ColorRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(10, 10)
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(0.34902, 0.694118, 0.196078, 1)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 384.0
+offset_bottom = 216.0
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="Control/CenterContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 10
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5

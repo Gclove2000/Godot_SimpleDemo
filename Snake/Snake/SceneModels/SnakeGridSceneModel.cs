@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using Bogus;
+using Godot;
 using Newtonsoft.Json;
 using Snake.Utils;
 using System;
@@ -16,13 +17,22 @@ namespace Snake.SceneModels
         private ColorRect colorRect;
         private ColorRect greenRect;
 
+
+        public event Action GameLoseEvent;
+
+        public event Action GameWinEvent;
+
         private GridContainer container;
 
         private int[,] snakeArray = new int[10, 10];
 
         private ColorRect[,] colorRects = new ColorRect[10, 10];
 
+        
+
         private Timer timer;
+
+        private bool isMove = false;
 
 
         public enum DirectionEnum { Left, Right, Up, Down }
@@ -31,16 +41,25 @@ namespace Snake.SceneModels
 
         private string BackGroundColor = "#dadada";
 
-        private string GreenGroundColor = "#59b132";
+        private string GreenGroundColor = "#448b25";
+
+        private string RedGroundColor = "#d95688";
+
+
 
 
         private int length = 3;
         private Vector2I position = new Vector2I(0, 0);
 
-        public SnakeGridSceneModel(PrintHelper printHelper)
+        private Vector2I coinPotion = new Vector2I(0,0);
+
+        private MenuSceneModel menuSceneModel;
+
+        public SnakeGridSceneModel(PrintHelper printHelper,MenuSceneModel menuSceneModel)
         {
             this.printHelper = printHelper;
             this.printHelper.SetTitle(nameof(SnakeGridSceneModel));
+            this.menuSceneModel = menuSceneModel;
         }
 
 
@@ -48,6 +67,7 @@ namespace Snake.SceneModels
         public override void Process(double delta)
         {
             JudgeDirection();
+
             //throw new NotImplementedException();
             //printHelper
 
@@ -62,6 +82,8 @@ namespace Snake.SceneModels
             colorRect = Scene.GetNode<ColorRect>("ColorRect");
             container = Scene.GetNode<GridContainer>("Control/CenterContainer/GridContainer");
             timer = Scene.GetNode<Timer>("Timer");
+
+
             timer.Start();
             timer.Timeout += Timer_Timeout;
             //greenRect = Scene.GetNode<ColorRect>("GreenRect");
@@ -82,37 +104,71 @@ namespace Snake.SceneModels
             snakeArray[1, 1] = 1;
             position.X = 1;
             position.Y = 3;
+            SetCoinPosition();
+
             SetColor();
             //printHelper.Debug(JsonConvert.SerializeObject(snakeArray));
 
         }
+
+       
 
         private void Timer_Timeout()
         {
             printHelper.Debug("timeout!");
             LiveDown();
             SnakeMove();
+            CheckGetCoin();
             SetColor();
         }
+
+        public void Stop()
+        {
+            printHelper.Debug("Stop");
+            timer.Stop();
+        }
+
+        public void Continue()
+        {
+            timer.Start();
+        }
+
+        public void Restart()
+        {
+
+        }
+
         #region set snake game logic
         private void JudgeDirection()
         {
-            if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Left))
+            if (isMove)
             {
-                Direction = DirectionEnum.Left;
+                if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Left) && Direction != DirectionEnum.Right)
+                {
+                    Direction = DirectionEnum.Left;
+                    isMove = false;
+
+                }
+                if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Right) && Direction != DirectionEnum.Left)
+                {
+                    Direction = DirectionEnum.Right;
+                    isMove = false;
+
+                }
+                if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Up) && Direction != DirectionEnum.Down)
+                {
+                    Direction = DirectionEnum.Up;
+                    isMove = false;
+
+                }
+                if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Down) && Direction != DirectionEnum.Up)
+                {
+                    Direction = DirectionEnum.Down;
+                    isMove = false;
+
+                }
             }
-            if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Right))
-            {
-                Direction = DirectionEnum.Right;
-            }
-            if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Up))
-            {
-                Direction = DirectionEnum.Up;
-            }
-            if (KeyboardHelper.KeyDown(KeyboardHelper.KeyMap.Down))
-            {
-                Direction = DirectionEnum.Down;
-            }
+           
         }
 
         private void LiveDown()
@@ -130,6 +186,50 @@ namespace Snake.SceneModels
             }
         }
 
+        private void SetCoinPosition()
+        {
+            var faker = new Faker();
+            var x = faker.Random.Int(0, 9);
+            var y = faker.Random.Int(0, 9);
+            while (snakeArray[x,y] > 0)
+            {
+                x++;
+                if(x == 10)
+                {
+                    x = 0;
+                    y++;
+                }
+                if(y == 10)
+                {
+                    y = 0;
+                }
+            }
+            coinPotion = new Vector2I(x, y);
+
+
+        }
+
+        private void CheckGetCoin()
+        {
+            if(position == coinPotion)
+            {
+                length++;
+                for (var i = 0; i < 10; i++)
+                {
+                    for (var j = 0; j < 10; j++)
+                    {
+                        if (snakeArray[i, j] > 0)
+                        {
+                            snakeArray[i, j]++;
+                        }
+
+                    }
+                }
+                SetCoinPosition();
+            }
+        }
+
+
         private void SetColor()
         {
             for(var i =0;i < 10; i++)
@@ -139,7 +239,12 @@ namespace Snake.SceneModels
                     if (snakeArray[i, j] > 0)
                     {
                         var color = Color.FromHtml(GreenGroundColor);
-                        color.R -= snakeArray[i, j]*0.1f;
+                        color.R += (length- snakeArray[i, j]) *0.1f;
+                        color.G += (length- snakeArray[i, j]) *0.1f;
+                        color.B += (length- snakeArray[i, j]) *0.1f;
+                        color.A -= (length- snakeArray[i, j]) *0.05f;
+
+
                         colorRects[i, j].Color = color;
                         
                     }
@@ -149,6 +254,7 @@ namespace Snake.SceneModels
                     }
                 }
             }
+            colorRects[coinPotion.X, coinPotion.Y].Color = Color.FromHtml(RedGroundColor);
         }
 
         private void SnakeMove()
@@ -169,8 +275,9 @@ namespace Snake.SceneModels
                     break;
 
             }
+            isMove = true;
 
-            if(position.X  == -1)
+            if (position.X  == -1)
             {
                 position.X = 9;
             }
@@ -187,10 +294,24 @@ namespace Snake.SceneModels
             {
                 position.Y = 0;
             }
+            if (snakeArray[position.X,position.Y] >0)
+            {
+                GameLoseEvent?.Invoke();
+            }
             snakeArray[position.X, position.Y] = length;
             printHelper.Debug(JsonConvert.SerializeObject(position));
         }
 
+
+        #endregion
+
+
+        #region game check
+
+        public void Win()
+        {
+
+        }
 
         #endregion
     }

@@ -27,7 +27,7 @@ namespace Snake.SceneScripts
         }
 
         public override void _Process(double delta)
-        {
+        {   
             base._Process(delta);   
             Model.Process(delta);
         }

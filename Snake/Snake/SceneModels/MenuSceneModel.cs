@@ -12,26 +12,21 @@ namespace Snake.SceneModels
     public class MenuSceneModel : ISceneModel
     {
 
-        private bool isShow = false;
-        public bool IsShow
-        {
-            get { return isShow; }
-            set
-            {
-                isShow = value;
-                Scene.Visible = value;
-            }
-        }
 
-        private Button button1;
-        private Button button2;
+
+        private Button continueBtn;
+        private Button restartBtn;
+        private Button winBtn;
+        private Button loseBtn;
+
+        private BoxContainer menuControl;
 
         private PrintHelper printHelper;
+
         public MenuSceneModel(PrintHelper printHelper)
         {
             this.printHelper = printHelper;
             printHelper.SetTitle(nameof(MenuSceneModel));
-
         }
 
 
@@ -44,12 +39,11 @@ namespace Snake.SceneModels
         public override void Ready()
         {
             printHelper.Debug("加载完成");
-            button1 = Scene.GetNode<Button>("Control/CenterContainer/VBoxContainer/Button1");
-            button2 = Scene.GetNode<Button>("Control/CenterContainer/VBoxContainer/Button2");
-
-
-            button1.ButtonDown += Button1_ButtonDown;
-            button2.ButtonDown += Button2_ButtonDown;
+            menuControl = Scene.GetNode<BoxContainer>("Control/CenterContainer/Menu/MenuControl");
+            continueBtn = Scene.GetNode<Button>("Control/CenterContainer/Menu/MenuControl/ContinueBtn");
+            restartBtn = Scene.GetNode<Button>("Control/CenterContainer/Menu/MenuControl/RestartBtn");
+            winBtn = Scene.GetNode<Button>("Control/CenterContainer/Lose/LoseBtn");
+            loseBtn = Scene.GetNode<Button>("Control/CenterContainer/Win/WinBtn");
             //throw new NotImplementedException();
         }
 
@@ -58,8 +52,8 @@ namespace Snake.SceneModels
         /// </summary>
         private void Button2_ButtonDown()
         {
-            IsShow = false;
             printHelper.Debug("restart");
+            
         }
 
         /// <summary>
@@ -67,9 +61,31 @@ namespace Snake.SceneModels
         /// </summary>
         private void Button1_ButtonDown()
         {
-            IsShow = false;
             printHelper.Debug("continue");
+        }
+
+
+        #region show controller
+
+        public void HideAll()
+        {
 
         }
+
+        public void ShowMenu()
+        {
+
+        }
+
+        public void ShowWin()
+        {
+
+        }
+
+        public void ShowLose()
+        {
+
+        }
+        #endregion
     }
 }

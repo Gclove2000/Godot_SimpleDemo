@@ -7,6 +7,6 @@
 [node name="Main" type="Node2D"]
 script = ExtResource("1_42hor")
 
-[node name="Menu" parent="." instance=ExtResource("2_ol2nh")]
-
 [node name="SnakeGrid" parent="." instance=ExtResource("2_81tp0")]
+
+[node name="Menu" parent="." instance=ExtResource("2_ol2nh")]

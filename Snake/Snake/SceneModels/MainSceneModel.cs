@@ -17,6 +17,9 @@ namespace Snake.SceneModels
         private FreeSqlHelper freeSqlHelper;
 
         private MenuSceneModel menuSceneModel;
+
+
+
         public MainSceneModel(PrintHelper printHelper, FreeSqlHelper freeSqlHelper, MenuSceneModel menuSceneModel)
         {
             this.printHelper = printHelper;

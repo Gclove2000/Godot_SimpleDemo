@@ -25,13 +25,61 @@ offset_bottom = 33.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
-layout_mode = 2
+[node name="Menu" type="Node" parent="Control/CenterContainer"]
 
-[node name="Button1" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+[node name="MenuControl" type="VBoxContainer" parent="Control/CenterContainer/Menu"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = -33.0
+offset_right = 36.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ContinueBtn" type="Button" parent="Control/CenterContainer/Menu/MenuControl"]
 layout_mode = 2
 text = "继续"
 
-[node name="Button2" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+[node name="RestartBtn" type="Button" parent="Control/CenterContainer/Menu/MenuControl"]
 layout_mode = 2
 text = "重新开始"
+
+[node name="Lose" type="Node" parent="Control/CenterContainer"]
+
+[node name="LoseBtn" type="Button" parent="Control/CenterContainer/Lose"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -41.0
+offset_top = -15.5
+offset_right = 41.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "You Lose!
+"
+
+[node name="Win" type="Node" parent="Control/CenterContainer"]
+
+[node name="WinBtn" type="Button" parent="Control/CenterContainer/Win"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "You Win!"

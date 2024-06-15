@@ -23,6 +23,10 @@ namespace Snake.SceneModels
 
         private PrintHelper printHelper;
 
+        public enum HideActionEnum {None,Continue,Restart,Lose,Win }
+
+        public event Action<HideActionEnum> HideAllEvent;
+
         public MenuSceneModel(PrintHelper printHelper)
         {
             this.printHelper = printHelper;
@@ -42,49 +46,75 @@ namespace Snake.SceneModels
             menuControl = Scene.GetNode<BoxContainer>("Control/CenterContainer/Menu/MenuControl");
             continueBtn = Scene.GetNode<Button>("Control/CenterContainer/Menu/MenuControl/ContinueBtn");
             restartBtn = Scene.GetNode<Button>("Control/CenterContainer/Menu/MenuControl/RestartBtn");
-            winBtn = Scene.GetNode<Button>("Control/CenterContainer/Lose/LoseBtn");
-            loseBtn = Scene.GetNode<Button>("Control/CenterContainer/Win/WinBtn");
+            winBtn = Scene.GetNode<Button>("Control/CenterContainer/Win/WinBtn");
+            loseBtn = Scene.GetNode<Button>("Control/CenterContainer/Lose/LoseBtn");
+
+            continueBtn.ButtonDown += ContinueBtn_ButtonDown;
+            restartBtn.ButtonDown += RestartBtn_ButtonDown;
+            winBtn.ButtonDown += WinBtn_ButtonDown;
+            loseBtn.ButtonDown += LoseBtn_ButtonDown;
+            HideAll(HideActionEnum.None);
             //throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Restart game
-        /// </summary>
-        private void Button2_ButtonDown()
+        private void LoseBtn_ButtonDown()
         {
-            printHelper.Debug("restart");
-            
+            printHelper.Debug("LoseBtn ButtonDown");
+            HideAll(HideActionEnum.Lose);
         }
 
-        /// <summary>
-        /// Conitnue Game
-        /// </summary>
-        private void Button1_ButtonDown()
+        private void WinBtn_ButtonDown()
         {
-            printHelper.Debug("continue");
+            printHelper.Debug("WinBtn ButtonDown");
+            HideAll(HideActionEnum.Win);
+
         }
+
+
+        private void RestartBtn_ButtonDown()
+        {
+            printHelper.Debug("RestartBtn ButtonDown");
+            HideAll(HideActionEnum.Restart);
+        }
+
+        private void ContinueBtn_ButtonDown()
+        {
+            printHelper.Debug("ContinueBtn ButtonDown");
+            HideAll(HideActionEnum.Continue);
+
+        }
+
+
+
 
 
         #region show controller
 
-        public void HideAll()
+        public void HideAll(HideActionEnum @enum)
         {
+            menuControl.Hide();
+            winBtn.Hide();
+            loseBtn.Hide();
+            HideAllEvent?.Invoke(@enum);
 
         }
 
         public void ShowMenu()
         {
-
+            printHelper.Debug("Show Menu!");
+            menuControl.Show();
         }
 
         public void ShowWin()
         {
-
+            printHelper.Debug("Show Win!");
+            winBtn.Show();
         }
 
         public void ShowLose()
         {
-
+            printHelper.Debug("Show Lose");
+            loseBtn.Show();
         }
         #endregion
     }

@@ -18,14 +18,59 @@ namespace Snake.SceneModels
 
         private MenuSceneModel menuSceneModel;
 
+        private SnakeGridSceneModel snakeGridSceneModel;
 
-
-        public MainSceneModel(PrintHelper printHelper, FreeSqlHelper freeSqlHelper, MenuSceneModel menuSceneModel)
+        public MainSceneModel(PrintHelper printHelper, FreeSqlHelper freeSqlHelper, MenuSceneModel menuSceneModel, SnakeGridSceneModel snakeGridSceneModel)
         {
             this.printHelper = printHelper;
             this.printHelper.SetTitle(nameof(MainSceneModel));
             this.freeSqlHelper = freeSqlHelper;
             this.menuSceneModel = menuSceneModel;
+            this.snakeGridSceneModel = snakeGridSceneModel;
+
+
+            menuSceneModel.HideAllEvent += MenuSceneModel_HideAllEvent;
+            snakeGridSceneModel.GameWinEvent += SnakeGridSceneModel_GameWinEvent;
+            snakeGridSceneModel.GameLoseEvent += SnakeGridSceneModel_GameLoseEvent;
+
+        }
+
+        private void SnakeGridSceneModel_GameLoseEvent()
+        {
+            printHelper.Debug("Game Lose!");
+            menuSceneModel.ShowLose();
+        }
+
+        private void SnakeGridSceneModel_GameWinEvent()
+        {
+            printHelper.Debug("Game Win!");
+            menuSceneModel.ShowWin();
+
+        }
+
+        private void MenuSceneModel_HideAllEvent(MenuSceneModel.HideActionEnum _enum)
+        {
+            switch (_enum)
+            {
+                case MenuSceneModel.HideActionEnum.None:
+                    break;
+                case MenuSceneModel.HideActionEnum.Continue:
+                    snakeGridSceneModel.Continue();
+                    break;
+                case MenuSceneModel.HideActionEnum.Restart:
+                    snakeGridSceneModel.Restart();
+                    break;
+                case MenuSceneModel.HideActionEnum.Lose:
+                    snakeGridSceneModel.Restart();
+
+                    break;
+                case MenuSceneModel.HideActionEnum.Win:
+                    snakeGridSceneModel.Restart();
+
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -37,20 +82,20 @@ namespace Snake.SceneModels
             if (Input.IsActionJustPressed(KeyboardHelper.KeyMap.ESC.ToString()))
             {
                 printHelper.Debug("pressed ESC");
-                menuSceneModel.IsShow = true;
+                menuSceneModel.ShowMenu();
+                snakeGridSceneModel.Stop();
             }
         }
 
         public override void Process(double delta)
         {
             Keyboard(delta);
-            
+
         }
 
         public override void Ready()
         {
             printHelper.Debug("load success！");
-            menuSceneModel.IsShow = false;
             //printHelper.Debug("插入数据库测试");
             //var lists = T_User.Faker.Generate(10);
             //var num = freeSqlHelper.SqliteDb.Insert(lists).ExecuteAffrows();

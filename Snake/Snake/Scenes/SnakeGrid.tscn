@@ -31,6 +31,12 @@ anchors_preset = 0
 offset_right = 384.0
 offset_bottom = 216.0
 
+[node name="Score" type="Label" parent="Control"]
+layout_mode = 1
+offset_right = 48.0
+offset_bottom = 23.0
+text = "Score:"
+
 [node name="CenterContainer" type="CenterContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 8
@@ -52,4 +58,4 @@ theme_override_constants/v_separation = 2
 columns = 10
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.4

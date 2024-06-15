@@ -13,17 +13,19 @@ namespace Snake.SceneModels
     public class SnakeGridSceneModel : ISceneModel
     {
         private PrintHelper printHelper;
-
+        #region Godot Object
         private ColorRect colorRect;
         private ColorRect greenRect;
 
+        private Godot.Label scoreLabel;
+        private GridContainer container;
+
+
+        #endregion
 
         public event Action GameLoseEvent;
 
         public event Action GameWinEvent;
-
-        private GridContainer container;
-
         private int[,] snakeArray = new int[10, 10];
 
         private ColorRect[,] colorRects = new ColorRect[10, 10];
@@ -49,6 +51,19 @@ namespace Snake.SceneModels
 
 
         private int length = 3;
+
+        private int score = 0;
+
+        public int Score
+        {
+            get => score;
+            set {
+                score = value;
+                scoreLabel.Text = $"Score:{score}";
+            }
+
+        }
+
         private Vector2I position = new Vector2I(0, 0);
 
         private Vector2I coinPotion = new Vector2I(0,0);
@@ -82,12 +97,10 @@ namespace Snake.SceneModels
             colorRect = Scene.GetNode<ColorRect>("ColorRect");
             container = Scene.GetNode<GridContainer>("Control/CenterContainer/GridContainer");
             timer = Scene.GetNode<Timer>("Timer");
-
+            scoreLabel = Scene.GetNode<Label>("Control/Score");
 
             timer.Start();
             timer.Timeout += Timer_Timeout;
-            //greenRect = Scene.GetNode<ColorRect>("GreenRect");
-
             for (var i = 0; i < 10; i++)
             {
                 for (var j = 0; j < 10; j++)
@@ -98,15 +111,9 @@ namespace Snake.SceneModels
                     colorRects[i, j] = newColorRect;
                 }
             }
-            colorRect.Visible = false;
-            snakeArray[1, 3] = 3;
-            snakeArray[1, 2] = 2;
-            snakeArray[1, 1] = 1;
-            position.X = 1;
-            position.Y = 3;
-            SetCoinPosition();
+            //greenRect = Scene.GetNode<ColorRect>("GreenRect");
 
-            SetColor();
+            Restart();
             //printHelper.Debug(JsonConvert.SerializeObject(snakeArray));
 
         }
@@ -115,12 +122,14 @@ namespace Snake.SceneModels
 
         private void Timer_Timeout()
         {
-            printHelper.Debug("timeout!");
+            //printHelper.Debug("timeout!");
             LiveDown();
             SnakeMove();
             CheckGetCoin();
             SetColor();
         }
+
+   
 
         public void Stop()
         {
@@ -135,7 +144,32 @@ namespace Snake.SceneModels
 
         public void Restart()
         {
+            timer.Start();
 
+            for (var i = 0; i < 10; i++)
+            {
+                for (var j = 0; j < 10; j++)
+                {
+                    snakeArray[i, j] = 0;
+                }
+            }
+            colorRect.Visible = false;
+            snakeArray[1, 3] = 3;
+            snakeArray[1, 2] = 2;
+            snakeArray[1, 1] = 1;
+            position.X = 1;
+            position.Y = 3;
+
+           
+
+            
+
+
+
+            SetCoinPosition();
+
+            SetColor();
+            Score = 0;
         }
 
         #region set snake game logic
@@ -225,6 +259,7 @@ namespace Snake.SceneModels
 
                     }
                 }
+                Score += length;
                 SetCoinPosition();
             }
         }
@@ -297,9 +332,17 @@ namespace Snake.SceneModels
             if (snakeArray[position.X,position.Y] >0)
             {
                 GameLoseEvent?.Invoke();
+                Stop();
+
             }
             snakeArray[position.X, position.Y] = length;
-            printHelper.Debug(JsonConvert.SerializeObject(position));
+
+            if (length == 100)
+            {
+                GameWinEvent?.Invoke();
+                Stop();
+            }
+            //printHelper.Debug(JsonConvert.SerializeObject(position));
         }
 
 

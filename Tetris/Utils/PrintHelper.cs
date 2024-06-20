@@ -32,10 +32,6 @@ namespace Tetris.Utils
             nlogHelper.Error(title + msg);
         }
 
-        public void Info(string msg)
-        {
-            nlogHelper.Info(title + msg);
-        }
 
         public void Warning(string msg)
         {

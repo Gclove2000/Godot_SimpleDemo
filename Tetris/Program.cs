@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tetris.SceneModels;
+using Tetris.SceneModels.Menu;
+using Tetris.SceneModels.Tetris;
 using Tetris.Utils;
 
 namespace Tetris
@@ -35,6 +37,8 @@ namespace Tetris
             builder.AddSingleton<NlogHelper>();
             builder.AddSingleton<MainSceneModel>();
             builder.AddSingleton<FreeSqlHelper>();
+            builder.AddSingleton<MenuSceneModel>();
+            builder.AddSingleton<TetrisSceneModel>();
         }
         /// <summary>
         /// 添加SceneModel，应以Transient添加

@@ -15,6 +15,8 @@ namespace Tetris.SceneScripts.Tetris
         public TetrisSceneModel Model { get; set; }
         public TetrisScene() {
             Model = Program.Services.GetService<TetrisSceneModel>();
+            Model.Scene = this;
+
         }
 
         public override void _Ready()
